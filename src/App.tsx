@@ -20,12 +20,11 @@ import {
 } from "lucide-react";
 import { 
   getPathfinderPath, 
-  PathfinderResponse, 
-  Option,
   saveTagsToCookies,
   getTagsFromCookies,
   clearTagsFromCookies
 } from "./services/geminiService";
+import { PathfinderResponse, Option } from "./types";
 
 export default function App() {
   const [userInput, setUserInput] = useState("");
@@ -82,8 +81,9 @@ export default function App() {
       setResponseStack([res]);
       setUserInput(input);
       setHistory([]);
-    } catch (err) {
+    } catch (err: any) {
       setError("No pudimos encontrar un camino. Intenta de nuevo.");
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -98,8 +98,9 @@ export default function App() {
       setResponse(res);
       setResponseStack(prev => [...prev, res]);
       setHistory(newHistory);
-    } catch (err) {
+    } catch (err: any) {
       setError("No pudimos refinar el camino. Intenta de nuevo.");
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -125,8 +126,9 @@ export default function App() {
       const res = await getPathfinderPath(userInput, history, selectedTags, location);
       setResponse(res);
       setResponseStack(prev => [...prev.slice(0, -1), res]);
-    } catch (err) {
+    } catch (err: any) {
       setError("No pudimos regenerar el plan. Intenta de nuevo.");
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -417,4 +419,3 @@ export default function App() {
     </div>
   );
 }
-
