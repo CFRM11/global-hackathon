@@ -21,7 +21,10 @@ import {
 import { 
   getPathfinderPath, 
   PathfinderResponse, 
-  Option 
+  Option,
+  saveTagsToCookies,
+  getTagsFromCookies,
+  clearTagsFromCookies
 } from "./services/geminiService";
 
 export default function App() {
@@ -34,6 +37,14 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  // Cargar tags guardados en cookies al montar el componente
+  useEffect(() => {
+    const savedTags = getTagsFromCookies();
+    if (savedTags.length > 0) {
+      setSelectedTags(savedTags);
+    }
+  }, []);
 
   // Request location on mount
   useEffect(() => {
@@ -55,9 +66,11 @@ export default function App() {
   const TAG_OPTIONS = ["barato", "outdoor", "indoor", "solo", "social", "aventura", "relajado", "romantico", "creativo", "fitness", "noche", "mañana"];
 
   const toggleTag = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
-    );
+    setSelectedTags(prev => {
+      const updatedTags = prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag];
+      saveTagsToCookies(updatedTags);
+      return updatedTags;
+    });
   };
 
   const startJourney = useCallback(async (input: string) => {
@@ -127,6 +140,7 @@ export default function App() {
     setResponse(null);
     setResponseStack([]);
     setError(null);
+    clearTagsFromCookies();
   };  return (
     <div id="app-root" className="min-h-screen bg-[#fafaf9] text-[#1c1917] flex flex-col items-center p-6 md:p-12 font-sans overflow-x-hidden">
       {/* Background Decor */}

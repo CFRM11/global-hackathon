@@ -8,6 +8,38 @@ if (!API_KEY || API_KEY === 'undefined' || API_KEY === '') {
 
 const ai = new GoogleGenAI({ apiKey: API_KEY || "" });
 
+// Funciones para manejar cookies de tags
+export const saveTagsToCookies = (tags: string[]): void => {
+  if (typeof window !== 'undefined') {
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString(); // 7 días
+    document.cookie = `selectedTags=${encodeURIComponent(JSON.stringify(tags))}; expires=${expires}; path=/`;
+  }
+};
+
+export const getTagsFromCookies = (): string[] => {
+  if (typeof window !== 'undefined') {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+      if (cookie.startsWith('selectedTags=')) {
+        const value = cookie.substring('selectedTags='.length);
+        try {
+          return JSON.parse(decodeURIComponent(value));
+        } catch (e) {
+          console.error('Error al parsear tags de cookies:', e);
+          return [];
+        }
+      }
+    }
+  }
+  return [];
+};
+
+export const clearTagsFromCookies = (): void => {
+  if (typeof window !== 'undefined') {
+    document.cookie = 'selectedTags=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+  }
+};
+
 export type Phase = "broad" | "refinement" | "final";
 
 export interface Option {
