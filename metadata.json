@@ -1,0 +1,6 @@
+{
+  "name": "What I Want",
+  "description": "A creative activity planner that narrows down vague desires into concrete, actionable plans through a step-by-step selection process.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": []
+}
